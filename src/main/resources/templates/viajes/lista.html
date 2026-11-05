@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
@@ -14,14 +15,16 @@
 
 <body>
 
+<!-- ENCABEZADO -->
 <header class="encabezado">
     <div class="contenedor barra">
 
-        <a th:href="@{/viajes}" class="logo">
+        <a th:href="@{/}" class="logo">
             Sistema Movilidad
         </a>
 
         <nav>
+            <a th:href="@{/}">Inicio</a>
             <a th:href="@{/carros}">Carros</a>
             <a th:href="@{/motores}">Motores</a>
             <a th:href="@{/choferes}">Choferes</a>
@@ -32,9 +35,10 @@
     </div>
 </header>
 
+<!-- CONTENIDO PRINCIPAL -->
 <main class="contenedor contenido-principal">
 
-    <!-- ENCABEZADO -->
+    <!-- TITULO -->
     <section class="cabecera-pagina">
 
         <div>
@@ -44,7 +48,7 @@
 
             <p class="descripcion">
                 Registra, consulta y administra los viajes
-                del sistema de movilidad.
+                con sus carros, motores, choferes y pasajeros.
             </p>
         </div>
 
@@ -86,7 +90,7 @@
 
     </section>
 
-    <!-- FILTRAR VIAJES -->
+    <!-- FILTRAR POR ESTADO -->
     <section class="panel-busqueda">
 
         <h2>Buscar viajes por estado</h2>
@@ -159,6 +163,7 @@
                         <th>Destino</th>
                         <th>Fecha y hora</th>
                         <th>Carro</th>
+                        <th>Motor</th>
                         <th>Chofer</th>
                         <th>Pasajero</th>
                         <th>Estado</th>
@@ -170,30 +175,48 @@
 
                     <tr th:each="viaje : ${viajes}">
 
+                        <!-- ID -->
                         <td th:text="${viaje.id}"></td>
 
+                        <!-- ORIGEN -->
                         <td th:text="${viaje.origen}"></td>
 
+                        <!-- DESTINO -->
                         <td th:text="${viaje.destino}"></td>
 
-                        <td th:text="${#temporals.format(viaje.fecha, 'dd/MM/yyyy HH:mm')}">
+                        <!-- FECHA -->
+                        <td th:text="${#temporals.format(
+                            viaje.fecha, 'dd/MM/yyyy HH:mm')}">
                         </td>
 
+                        <!-- CARRO -->
                         <td th:text="${viaje.carro.placa}">
                         </td>
 
-                        <td th:text="|${viaje.chofer.nombre} ${viaje.chofer.apellido}|">
+                        <!-- MOTOR NUEVO -->
+                        <td th:text="${viaje.motor != null
+                            ? viaje.motor.numeroSerie
+                            : 'Sin asignar'}">
                         </td>
 
-                        <td th:text="|${viaje.pasajero.nombre} ${viaje.pasajero.apellido}|">
+                        <!-- CHOFER -->
+                        <td th:text="|${viaje.chofer.nombre}
+                            ${viaje.chofer.apellido}|">
                         </td>
 
+                        <!-- PASAJERO -->
+                        <td th:text="|${viaje.pasajero.nombre}
+                            ${viaje.pasajero.apellido}|">
+                        </td>
+
+                        <!-- ESTADO -->
                         <td th:text="${viaje.estado}">
                         </td>
 
+                        <!-- ACCIONES -->
                         <td class="acciones">
 
-                            <!-- EDITAR -->
+                            <!-- EDITAR VIAJE -->
                             <a class="boton-editar"
                                th:href="@{/viajes/editar/{id}(id=${viaje.id})}">
                                 Editar
@@ -234,7 +257,7 @@
 
                             </form>
 
-                            <!-- ELIMINAR -->
+                            <!-- ELIMINAR VIAJE -->
                             <form method="POST"
                                   th:action="@{/viajes/eliminar/{id}(id=${viaje.id})}"
                                   onsubmit="return confirm('¿Eliminar este viaje?');">
@@ -250,15 +273,23 @@
                     </tr>
 
                 </tbody>
+
             </table>
 
         </div>
+
     </section>
 
 </main>
 
+<!-- PIE DE PAGINA -->
 <footer class="pie-pagina">
-    <p>Sistema Movilidad | Proyecto Spring Boot</p>
+
+    <p>
+        Sistema Movilidad |
+        Proyecto académico Spring Boot
+    </p>
+
 </footer>
 
 </body>

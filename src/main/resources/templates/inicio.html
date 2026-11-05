@@ -1,6 +1,6 @@
+
 <!DOCTYPE html>
-<html lang="es"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -24,12 +24,12 @@
         header {
             background: #17365d;
             color: white;
-            padding: 22px;
+            padding: 28px 20px;
             text-align: center;
         }
 
         header h1 {
-            margin: 0 0 8px;
+            margin: 0 0 10px;
         }
 
         header p {
@@ -38,30 +38,87 @@
         }
 
         main {
-            max-width: 1100px;
-            margin: 45px auto;
+            max-width: 1150px;
+            margin: 40px auto;
             padding: 0 20px;
         }
 
         .bienvenida {
             text-align: center;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
         }
 
         .bienvenida h2 {
             font-size: 30px;
+            margin-bottom: 10px;
         }
 
+        .titulo-seccion {
+            margin: 35px 0 20px;
+            color: #17365d;
+        }
+
+        /* ESTADISTICAS */
+        .estadisticas-inicio {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(170px, 1fr));
+            gap: 16px;
+        }
+
+        .estadistica {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+        }
+
+        .estadistica h3 {
+            margin: 0 0 12px;
+            font-size: 16px;
+            color: #52647c;
+        }
+
+        .estadistica .numero {
+            font-size: 38px;
+            font-weight: bold;
+            color: #2463a6;
+        }
+
+        .estados-viajes {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(190px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .estado {
+            background: #eaf1fa;
+            padding: 18px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .estado strong {
+            display: block;
+            font-size: 26px;
+            margin-top: 8px;
+            color: #17365d;
+        }
+
+        /* MODULOS */
         .contenedor-modulos {
             display: grid;
             grid-template-columns:
-                repeat(auto-fit, minmax(230px, 1fr));
+                repeat(auto-fit, minmax(210px, 1fr));
             gap: 22px;
         }
 
         .tarjeta {
             background: white;
-            padding: 30px 22px;
+            padding: 28px 20px;
             border-radius: 14px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
@@ -73,17 +130,16 @@
         }
 
         .icono {
-            font-size: 42px;
+            font-size: 40px;
             margin-bottom: 12px;
         }
 
         .tarjeta h3 {
-            margin: 10px 0;
             color: #17365d;
         }
 
         .tarjeta p {
-            min-height: 50px;
+            min-height: 45px;
             color: #5a687c;
         }
 
@@ -102,6 +158,39 @@
             background: #173f70;
         }
 
+        /* EXCEL */
+        .seccion-reportes {
+            background: white;
+            text-align: center;
+            margin-top: 35px;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .seccion-reportes h2 {
+            color: #17365d;
+        }
+
+        .seccion-reportes p {
+            color: #5a687c;
+        }
+
+        .boton-excel {
+            display: inline-block;
+            padding: 14px 25px;
+            margin-top: 12px;
+            background: #167347;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .boton-excel:hover {
+            background: #105433;
+        }
+
         footer {
             text-align: center;
             padding: 25px;
@@ -114,17 +203,93 @@
 
 <header>
     <h1>Sistema de Movilidad</h1>
-    <p>Administración de vehículos y viajes</p>
+    <p>Panel de administración de vehículos y viajes</p>
 </header>
 
 <main>
 
+    <!-- BIENVENIDA -->
     <section class="bienvenida">
         <h2>Panel principal</h2>
         <p>
-            Selecciona el módulo que deseas administrar.
+            Consulta las estadísticas y administra
+            los módulos del sistema.
         </p>
     </section>
+
+    <!-- ESTADISTICAS GENERALES -->
+    <h2 class="titulo-seccion">
+        Estadísticas generales
+    </h2>
+
+    <section class="estadisticas-inicio">
+
+        <div class="estadistica">
+            <h3>🚗 Carros</h3>
+            <span class="numero"
+                  th:text="${totalCarros}">0</span>
+        </div>
+
+        <div class="estadistica">
+            <h3>⚙️ Motores</h3>
+            <span class="numero"
+                  th:text="${totalMotores}">0</span>
+        </div>
+
+        <div class="estadistica">
+            <h3>🚘 Choferes</h3>
+            <span class="numero"
+                  th:text="${totalChoferes}">0</span>
+        </div>
+
+        <div class="estadistica">
+            <h3>👥 Pasajeros</h3>
+            <span class="numero"
+                  th:text="${totalPasajeros}">0</span>
+        </div>
+
+        <div class="estadistica">
+            <h3>🗺️ Viajes</h3>
+            <span class="numero"
+                  th:text="${totalViajes}">0</span>
+        </div>
+
+    </section>
+
+    <!-- ESTADOS DE LOS VIAJES -->
+    <h2 class="titulo-seccion">
+        Estado de los viajes
+    </h2>
+
+    <section class="estados-viajes">
+
+        <div class="estado">
+            Viajes programados
+            <strong th:text="${viajesProgramados}">
+                0
+            </strong>
+        </div>
+
+        <div class="estado">
+            Viajes en curso
+            <strong th:text="${viajesEnCurso}">
+                0
+            </strong>
+        </div>
+
+        <div class="estado">
+            Viajes finalizados
+            <strong th:text="${viajesFinalizados}">
+                0
+            </strong>
+        </div>
+
+    </section>
+
+    <!-- MODULOS -->
+    <h2 class="titulo-seccion">
+        Módulos del sistema
+    </h2>
 
     <section class="contenedor-modulos">
 
@@ -147,7 +312,7 @@
         </div>
 
         <div class="tarjeta">
-            <div class="icono">👨‍✈️</div>
+            <div class="icono">🚘</div>
             <h3>Choferes</h3>
             <p>Registrar y consultar conductores.</p>
             <a th:href="@{/choferes}" class="boton">
@@ -174,10 +339,28 @@
         </div>
 
     </section>
+
+    <!-- REPORTES EXCEL -->
+    <section class="seccion-reportes">
+
+        <h2>📊 Reportes del sistema</h2>
+
+        <p>
+            Descarga los registros de carros, motores,
+            choferes, pasajeros y viajes en Excel.
+        </p>
+
+        <a th:href="@{/reportes/excel}"
+           class="boton-excel">
+            📥 Descargar reporte Excel
+        </a>
+
+    </section>
+
 </main>
 
 <footer>
-    Sistema Movilidad - Proyecto académico Spring Boot
+    Sistema Movilidad | Proyecto académico Spring Boot
 </footer>
 
 </body>

@@ -1,3 +1,4 @@
+
 package com.movilidad.controller;
 
 import com.movilidad.model.Viaje;
@@ -18,46 +19,60 @@ public class ViajeController {
 
     private final ViajeService servicio;
     private final CarroRepository carros;
+    private final MotorRepository motores;
     private final ChoferRepository choferes;
     private final PasajeroRepository pasajeros;
 
+    // CONSTRUCTOR
     public ViajeController(
             ViajeService servicio,
             CarroRepository carros,
+            MotorRepository motores,
             ChoferRepository choferes,
             PasajeroRepository pasajeros) {
 
         this.servicio = servicio;
         this.carros = carros;
+        this.motores = motores;
         this.choferes = choferes;
         this.pasajeros = pasajeros;
     }
 
-    // LISTAR Y FILTRAR VIAJES
+    // 1. LISTAR Y FILTRAR VIAJES
     @GetMapping
     public String listar(
             @RequestParam(required = false) String estado,
             Model modelo) {
 
         modelo.addAttribute(
-                "viajes", servicio.buscarPorEstado(estado));
+                "viajes",
+                servicio.buscarPorEstado(estado)
+        );
 
-        modelo.addAttribute("total",
-                servicio.contarViajes());
+        modelo.addAttribute(
+                "total",
+                servicio.contarViajes()
+        );
 
-        modelo.addAttribute("programados",
-                servicio.contarProgramados());
+        modelo.addAttribute(
+                "programados",
+                servicio.contarProgramados()
+        );
 
-        modelo.addAttribute("finalizados",
-                servicio.contarFinalizados());
+        modelo.addAttribute(
+                "finalizados",
+                servicio.contarFinalizados()
+        );
 
-        modelo.addAttribute("estadoBuscado",
-                estado == null ? "" : estado);
+        modelo.addAttribute(
+                "estadoBuscado",
+                estado == null ? "" : estado
+        );
 
         return "viajes/lista";
     }
 
-    // FORMULARIO NUEVO
+    // 2. MOSTRAR FORMULARIO PARA REGISTRAR
     @GetMapping("/nuevo")
     public String nuevo(Model modelo) {
 
@@ -65,8 +80,8 @@ public class ViajeController {
 
         viaje.setFecha(
                 LocalDateTime.now()
-                    .plusHours(1)
-                    .truncatedTo(ChronoUnit.MINUTES)
+                        .plusHours(1)
+                        .truncatedTo(ChronoUnit.MINUTES)
         );
 
         modelo.addAttribute("viaje", viaje);
@@ -77,7 +92,7 @@ public class ViajeController {
         return "viajes/formulario";
     }
 
-    // FORMULARIO EDITAR
+    // 3. MOSTRAR FORMULARIO PARA EDITAR
     @GetMapping("/editar/{id}")
     public String editar(
             @PathVariable Long id,
@@ -85,6 +100,7 @@ public class ViajeController {
             RedirectAttributes mensajes) {
 
         try {
+
             Viaje viaje = servicio.buscarPorId(id);
 
             modelo.addAttribute("viaje", viaje);
@@ -92,15 +108,26 @@ public class ViajeController {
 
             modelo.addAttribute(
                     "carroSeleccionado",
-                    viaje.getCarro().getId());
+                    viaje.getCarro().getId()
+            );
+
+            // COMPATIBLE CON VIAJES ANTERIORES SIN MOTOR
+            modelo.addAttribute(
+                    "motorSeleccionado",
+                    viaje.getMotor() == null
+                            ? null
+                            : viaje.getMotor().getId()
+            );
 
             modelo.addAttribute(
                     "choferSeleccionado",
-                    viaje.getChofer().getId());
+                    viaje.getChofer().getId()
+            );
 
             modelo.addAttribute(
                     "pasajeroSeleccionado",
-                    viaje.getPasajero().getId());
+                    viaje.getPasajero().getId()
+            );
 
             cargarOpciones(modelo);
 
@@ -109,17 +136,20 @@ public class ViajeController {
         } catch (IllegalArgumentException e) {
 
             mensajes.addFlashAttribute(
-                    "error", e.getMessage());
+                    "error",
+                    e.getMessage()
+            );
 
             return "redirect:/viajes";
         }
     }
 
-    // REGISTRAR O ACTUALIZAR
+    // 4. GUARDAR O ACTUALIZAR VIAJE
     @PostMapping("/guardar")
     public String guardar(
             @ModelAttribute Viaje viaje,
             @RequestParam Long carroId,
+            @RequestParam(required = false) Long motorId,
             @RequestParam Long choferId,
             @RequestParam Long pasajeroId,
             Model modelo,
@@ -131,29 +161,52 @@ public class ViajeController {
 
             if (nuevo) {
 
-                servicio.registrarViaje(
-                        viaje,
-                        carroId,
-                        choferId,
-                        pasajeroId
-                );
+                if (motorId == null) {
+                    // COMPATIBILIDAD CON FORMULARIO ANTERIOR
+                    servicio.registrarViaje(
+                            viaje,
+                            carroId,
+                            choferId,
+                            pasajeroId
+                    );
+                } else {
+                    servicio.registrarViaje(
+                            viaje,
+                            carroId,
+                            motorId,
+                            choferId,
+                            pasajeroId
+                    );
+                }
 
             } else {
 
-                servicio.actualizarViaje(
-                        viaje.getId(),
-                        viaje,
-                        carroId,
-                        choferId,
-                        pasajeroId
-                );
+                if (motorId == null) {
+                    // CONSERVAR COMPATIBILIDAD ANTERIOR
+                    servicio.actualizarViaje(
+                            viaje.getId(),
+                            viaje,
+                            carroId,
+                            choferId,
+                            pasajeroId
+                    );
+                } else {
+                    servicio.actualizarViaje(
+                            viaje.getId(),
+                            viaje,
+                            carroId,
+                            motorId,
+                            choferId,
+                            pasajeroId
+                    );
+                }
             }
 
             mensajes.addFlashAttribute(
                     "mensaje",
                     nuevo
-                        ? "Viaje registrado correctamente."
-                        : "Viaje actualizado correctamente."
+                            ? "Viaje registrado correctamente."
+                            : "Viaje actualizado correctamente."
             );
 
             return "redirect:/viajes";
@@ -161,17 +214,38 @@ public class ViajeController {
         } catch (IllegalArgumentException e) {
 
             modelo.addAttribute("viaje", viaje);
-            modelo.addAttribute("error", e.getMessage());
 
             modelo.addAttribute(
                     "titulo",
-                    nuevo ? "Registrar viaje" : "Editar viaje"
+                    nuevo
+                            ? "Registrar viaje"
+                            : "Editar viaje"
             );
 
-            modelo.addAttribute("carroSeleccionado", carroId);
-            modelo.addAttribute("choferSeleccionado", choferId);
             modelo.addAttribute(
-                    "pasajeroSeleccionado", pasajeroId);
+                    "error",
+                    e.getMessage()
+            );
+
+            modelo.addAttribute(
+                    "carroSeleccionado",
+                    carroId
+            );
+
+            modelo.addAttribute(
+                    "motorSeleccionado",
+                    motorId
+            );
+
+            modelo.addAttribute(
+                    "choferSeleccionado",
+                    choferId
+            );
+
+            modelo.addAttribute(
+                    "pasajeroSeleccionado",
+                    pasajeroId
+            );
 
             cargarOpciones(modelo);
 
@@ -179,7 +253,7 @@ public class ViajeController {
         }
     }
 
-    // CAMBIAR ESTADO
+    // 5. CAMBIAR ESTADO DE UN VIAJE
     @PostMapping("/estado/{id}")
     public String cambiarEstado(
             @PathVariable Long id,
@@ -198,14 +272,15 @@ public class ViajeController {
         } catch (IllegalArgumentException e) {
 
             mensajes.addFlashAttribute(
-                    "error", e.getMessage()
+                    "error",
+                    e.getMessage()
             );
         }
 
         return "redirect:/viajes";
     }
 
-    // ELIMINAR VIAJE
+    // 6. ELIMINAR UN VIAJE
     @PostMapping("/eliminar/{id}")
     public String eliminar(
             @PathVariable Long id,
@@ -223,18 +298,35 @@ public class ViajeController {
         } catch (IllegalArgumentException e) {
 
             mensajes.addFlashAttribute(
-                    "error", e.getMessage()
+                    "error",
+                    e.getMessage()
             );
         }
 
         return "redirect:/viajes";
     }
 
-    // CARGAR CARROS, CHOFERES Y PASAJEROS
+    // 7. CARGAR CARROS, MOTORES, CHOFERES Y PASAJEROS
     private void cargarOpciones(Model modelo) {
 
-        modelo.addAttribute("carros", carros.findAll());
-        modelo.addAttribute("choferes", choferes.findAll());
-        modelo.addAttribute("pasajeros", pasajeros.findAll());
+        modelo.addAttribute(
+                "carros",
+                carros.findAll()
+        );
+
+        modelo.addAttribute(
+                "motores",
+                motores.findAll()
+        );
+
+        modelo.addAttribute(
+                "choferes",
+                choferes.findAll()
+        );
+
+        modelo.addAttribute(
+                "pasajeros",
+                pasajeros.findAll()
+        );
     }
 }

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
@@ -14,14 +15,16 @@
 
 <body>
 
+<!-- ENCABEZADO -->
 <header class="encabezado">
     <div class="contenedor barra">
 
-        <a th:href="@{/viajes}" class="logo">
+        <a th:href="@{/}" class="logo">
             Sistema Movilidad
         </a>
 
         <nav>
+            <a th:href="@{/}">Inicio</a>
             <a th:href="@{/carros}">Carros</a>
             <a th:href="@{/motores}">Motores</a>
             <a th:href="@{/choferes}">Choferes</a>
@@ -32,39 +35,47 @@
     </div>
 </header>
 
+<!-- CONTENIDO -->
 <main class="contenedor contenido-formulario">
 
     <!-- TITULO -->
     <section class="cabecera-formulario">
 
-        <p class="etiqueta">GESTIÓN DE VIAJES</p>
+        <p class="etiqueta">
+            GESTION DE VIAJES
+        </p>
 
         <h1 th:text="${titulo}">
             Registrar viaje
         </h1>
 
         <p class="descripcion">
-            Completa los datos del recorrido y
-            selecciona el carro, chofer y pasajero.
+            Completa los datos del recorrido
+            y selecciona el carro, motor,
+            chofer y pasajero.
         </p>
 
     </section>
 
+    <!-- FORMULARIO -->
     <section class="tarjeta-formulario">
 
-        <!-- ERRORES -->
+        <!-- MENSAJE DE ERROR -->
         <div th:if="${error}"
              class="alerta error"
              th:text="${error}">
         </div>
 
-        <!-- INFORMACION PREVIA -->
+        <!-- COMPROBAR REGISTROS -->
         <div class="alerta error"
-             th:if="${#lists.isEmpty(carros) or #lists.isEmpty(choferes) or #lists.isEmpty(pasajeros)}">
+             th:if="${#lists.isEmpty(carros)
+                     or #lists.isEmpty(motores)
+                     or #lists.isEmpty(choferes)
+                     or #lists.isEmpty(pasajeros)}">
 
-            Antes de registrar un viaje necesitas
-            tener al menos un carro, un chofer
-            y un pasajero registrados.
+            Para registrar un viaje debes tener
+            al menos un carro, un motor,
+            un chofer y un pasajero registrados.
 
         </div>
 
@@ -72,8 +83,9 @@
               th:object="${viaje}"
               method="POST">
 
-            <!-- ID -->
-            <input type="hidden" th:field="*{id}">
+            <!-- ID DEL VIAJE -->
+            <input type="hidden"
+                   th:field="*{id}">
 
             <!-- ORIGEN -->
             <div class="grupo-formulario">
@@ -85,7 +97,7 @@
                 <input type="text"
                        id="origen"
                        th:field="*{origen}"
-                       placeholder="Ejemplo: Cúcuta"
+                       placeholder="Ejemplo: Cucuta"
                        maxlength="100"
                        required>
 
@@ -107,7 +119,7 @@
 
             </div>
 
-            <!-- FECHA -->
+            <!-- FECHA Y HORA -->
             <div class="grupo-formulario">
 
                 <label for="fecha">
@@ -121,7 +133,7 @@
 
             </div>
 
-            <!-- CARRO -->
+            <!-- SELECCIONAR CARRO -->
             <div class="grupo-formulario">
 
                 <label for="carroId">
@@ -146,7 +158,32 @@
 
             </div>
 
-            <!-- CHOFER -->
+            <!-- SELECCIONAR MOTOR -->
+            <div class="grupo-formulario">
+
+                <label for="motorId">
+                    Seleccionar motor
+                </label>
+
+                <select id="motorId"
+                        name="motorId"
+                        required>
+
+                    <option value="">
+                        Selecciona un motor
+                    </option>
+
+                    <option th:each="motor : ${motores}"
+                            th:value="${motor.id}"
+                            th:text="|${motor.numeroSerie} - ${motor.marca} - ${motor.tipo}|"
+                            th:selected="${motorSeleccionado != null and motorSeleccionado == motor.id}">
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- SELECCIONAR CHOFER -->
             <div class="grupo-formulario">
 
                 <label for="choferId">
@@ -171,7 +208,7 @@
 
             </div>
 
-            <!-- PASAJERO -->
+            <!-- SELECCIONAR PASAJERO -->
             <div class="grupo-formulario">
 
                 <label for="pasajeroId">
@@ -201,13 +238,20 @@
 
                 <button type="submit"
                         class="boton-principal"
-                        th:disabled="${#lists.isEmpty(carros) or #lists.isEmpty(choferes) or #lists.isEmpty(pasajeros)}">
+                        th:disabled="${#lists.isEmpty(carros)
+                            or #lists.isEmpty(motores)
+                            or #lists.isEmpty(choferes)
+                            or #lists.isEmpty(pasajeros)}">
+
                     Guardar viaje
+
                 </button>
 
                 <a th:href="@{/viajes}"
                    class="boton-secundario">
+
                     Cancelar
+
                 </a>
 
             </div>
@@ -218,8 +262,14 @@
 
 </main>
 
+<!-- PIE DE PAGINA -->
 <footer class="pie-pagina">
-    <p>Sistema Movilidad | Proyecto Spring Boot</p>
+
+    <p>
+        Sistema Movilidad |
+        Proyecto academico Spring Boot
+    </p>
+
 </footer>
 
 </body>

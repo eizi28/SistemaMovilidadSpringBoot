@@ -1,3 +1,4 @@
+
 package com.movilidad.service;
 
 import com.movilidad.model.*;
@@ -15,6 +16,7 @@ public class ViajeService {
 
     private final ViajeRepository viajeRepositorio;
     private final CarroRepository carroRepositorio;
+    private final MotorRepository motorRepositorio;
     private final ChoferRepository choferRepositorio;
     private final PasajeroRepository pasajeroRepositorio;
 
@@ -26,24 +28,27 @@ public class ViajeService {
                 "CANCELADO"
             );
 
+    // CONSTRUCTOR
     public ViajeService(
             ViajeRepository viajeRepositorio,
             CarroRepository carroRepositorio,
+            MotorRepository motorRepositorio,
             ChoferRepository choferRepositorio,
             PasajeroRepository pasajeroRepositorio) {
 
         this.viajeRepositorio = viajeRepositorio;
         this.carroRepositorio = carroRepositorio;
+        this.motorRepositorio = motorRepositorio;
         this.choferRepositorio = choferRepositorio;
         this.pasajeroRepositorio = pasajeroRepositorio;
     }
 
-    // LISTAR VIAJES
+    // 1. LISTAR TODOS LOS VIAJES
     public List<Viaje> listarViajes() {
         return viajeRepositorio.findAllByOrderByFechaDesc();
     }
 
-    // BUSCAR POR ID
+    // 2. BUSCAR VIAJE POR ID
     public Viaje buscarPorId(Long id) {
         return viajeRepositorio.findById(id)
                 .orElseThrow(() ->
@@ -53,7 +58,7 @@ public class ViajeService {
                 );
     }
 
-    // LISTAR VIAJES POR ESTADO
+    // 3. BUSCAR VIAJES POR ESTADO
     public List<Viaje> buscarPorEstado(String estado) {
 
         if (estado == null || estado.isBlank()) {
@@ -66,7 +71,39 @@ public class ViajeService {
                 );
     }
 
-    // REGISTRAR VIAJE
+    // 4. REGISTRAR VIAJE CON MOTOR
+    public Viaje registrarViaje(
+            Viaje viaje,
+            Long carroId,
+            Long motorId,
+            Long choferId,
+            Long pasajeroId) {
+
+        validarDatos(viaje);
+
+        if (motorId == null) {
+            throw new IllegalArgumentException(
+                "Debes seleccionar un motor."
+            );
+        }
+
+        viaje.setId(null);
+        viaje.setOrigen(viaje.getOrigen().trim());
+        viaje.setDestino(viaje.getDestino().trim());
+        viaje.setEstado("PROGRAMADO");
+
+        asignarParticipantes(
+                viaje,
+                carroId,
+                motorId,
+                choferId,
+                pasajeroId
+        );
+
+        return viajeRepositorio.save(viaje);
+    }
+
+    // COMPATIBILIDAD TEMPORAL CON EL CONTROLADOR ANTERIOR
     public Viaje registrarViaje(
             Viaje viaje,
             Long carroId,
@@ -81,13 +118,51 @@ public class ViajeService {
         viaje.setEstado("PROGRAMADO");
 
         asignarParticipantes(
-                viaje, carroId, choferId, pasajeroId
+                viaje,
+                carroId,
+                null,
+                choferId,
+                pasajeroId
         );
 
         return viajeRepositorio.save(viaje);
     }
 
-    // ACTUALIZAR VIAJE
+    // 5. ACTUALIZAR VIAJE CON MOTOR
+    public Viaje actualizarViaje(
+            Long id,
+            Viaje datos,
+            Long carroId,
+            Long motorId,
+            Long choferId,
+            Long pasajeroId) {
+
+        Viaje existente = buscarPorId(id);
+
+        validarDatos(datos);
+
+        if (motorId == null) {
+            throw new IllegalArgumentException(
+                "Debes seleccionar un motor."
+            );
+        }
+
+        existente.setOrigen(datos.getOrigen().trim());
+        existente.setDestino(datos.getDestino().trim());
+        existente.setFecha(datos.getFecha());
+
+        asignarParticipantes(
+                existente,
+                carroId,
+                motorId,
+                choferId,
+                pasajeroId
+        );
+
+        return viajeRepositorio.save(existente);
+    }
+
+    // COMPATIBILIDAD TEMPORAL CON EL CONTROLADOR ANTERIOR
     public Viaje actualizarViaje(
             Long id,
             Viaje datos,
@@ -104,18 +179,33 @@ public class ViajeService {
         existente.setFecha(datos.getFecha());
 
         asignarParticipantes(
-                existente, carroId, choferId, pasajeroId
+                existente,
+                carroId,
+                existente.getMotor() == null
+                    ? null
+                    : existente.getMotor().getId(),
+                choferId,
+                pasajeroId
         );
 
         return viajeRepositorio.save(existente);
     }
 
-    // ASIGNAR CARRO, CHOFER Y PASAJERO
+    // 6. ASIGNAR CARRO, MOTOR, CHOFER Y PASAJERO
     private void asignarParticipantes(
             Viaje viaje,
             Long carroId,
+            Long motorId,
             Long choferId,
             Long pasajeroId) {
+
+        if (carroId == null ||
+                choferId == null ||
+                pasajeroId == null) {
+            throw new IllegalArgumentException(
+                "Debes seleccionar carro, chofer y pasajero."
+            );
+        }
 
         Carro carro = carroRepositorio.findById(carroId)
                 .orElseThrow(() ->
@@ -123,6 +213,17 @@ public class ViajeService {
                         "El carro seleccionado no existe."
                     )
                 );
+
+        Motor motor = null;
+
+        if (motorId != null) {
+            motor = motorRepositorio.findById(motorId)
+                    .orElseThrow(() ->
+                        new IllegalArgumentException(
+                            "El motor seleccionado no existe."
+                        )
+                    );
+        }
 
         Chofer chofer = choferRepositorio.findById(choferId)
                 .orElseThrow(() ->
@@ -140,17 +241,17 @@ public class ViajeService {
                 );
 
         viaje.setCarro(carro);
+        viaje.setMotor(motor);
         viaje.setChofer(chofer);
         viaje.setPasajero(pasajero);
     }
 
-    // CAMBIAR ESTADO DE VIAJE
+    // 7. CAMBIAR ESTADO DEL VIAJE
     public Viaje cambiarEstado(Long id, String estado) {
 
         Viaje viaje = buscarPorId(id);
 
-        if (estado == null
-                || !ESTADOS.contains(estado)) {
+        if (estado == null || !ESTADOS.contains(estado)) {
             throw new IllegalArgumentException(
                 "El estado del viaje no es valido."
             );
@@ -161,28 +262,28 @@ public class ViajeService {
         return viajeRepositorio.save(viaje);
     }
 
-    // ELIMINAR VIAJE
+    // 8. ELIMINAR VIAJE
     public void eliminarViaje(Long id) {
         Viaje viaje = buscarPorId(id);
         viajeRepositorio.delete(viaje);
     }
 
-    // CONTAR TODOS LOS VIAJES
+    // 9. CONTAR TODOS LOS VIAJES
     public long contarViajes() {
         return viajeRepositorio.count();
     }
 
-    // CONTAR VIAJES FINALIZADOS
+    // 10. CONTAR VIAJES FINALIZADOS
     public long contarFinalizados() {
         return viajeRepositorio.countByEstado("FINALIZADO");
     }
 
-    // CONTAR VIAJES PROGRAMADOS
+    // 11. CONTAR VIAJES PROGRAMADOS
     public long contarProgramados() {
         return viajeRepositorio.countByEstado("PROGRAMADO");
     }
 
-    // VALIDAR DATOS
+    // 12. VALIDAR DATOS DEL VIAJE
     private void validarDatos(Viaje viaje) {
 
         if (viaje == null) {
@@ -191,22 +292,22 @@ public class ViajeService {
             );
         }
 
-        if (viaje.getOrigen() == null
-                || viaje.getOrigen().isBlank()) {
+        if (viaje.getOrigen() == null ||
+                viaje.getOrigen().isBlank()) {
             throw new IllegalArgumentException(
                 "Debes ingresar el origen."
             );
         }
 
-        if (viaje.getDestino() == null
-                || viaje.getDestino().isBlank()) {
+        if (viaje.getDestino() == null ||
+                viaje.getDestino().isBlank()) {
             throw new IllegalArgumentException(
                 "Debes ingresar el destino."
             );
         }
 
-        if (viaje.getOrigen().trim().length() > 100
-                || viaje.getDestino().trim().length() > 100) {
+        if (viaje.getOrigen().trim().length() > 100 ||
+                viaje.getDestino().trim().length() > 100) {
             throw new IllegalArgumentException(
                 "El origen o destino es demasiado largo."
             );
@@ -215,7 +316,7 @@ public class ViajeService {
         if (viaje.getOrigen().trim().equalsIgnoreCase(
                 viaje.getDestino().trim())) {
             throw new IllegalArgumentException(
-                "El origen y el destino deben ser diferentes."
+                "El origen y destino deben ser diferentes."
             );
         }
 
