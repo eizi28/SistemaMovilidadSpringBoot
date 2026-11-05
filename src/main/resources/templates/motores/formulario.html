@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Formulario de Motores | Sistema Movilidad</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/estilos.css}">
+</head>
+
+<body>
+
+    <!-- ENCABEZADO -->
+    <header class="encabezado">
+        <div class="contenedor barra">
+
+            <a th:href="@{/motores}" class="logo">
+                Sistema Movilidad
+            </a>
+
+            <nav>
+                <a th:href="@{/carros}" class="enlace-menu">
+                    Carros
+                </a>
+
+                <a th:href="@{/motores}" class="enlace-menu">
+                    Motores
+                </a>
+            </nav>
+
+        </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="contenedor contenido-formulario">
+
+        <section class="cabecera-formulario">
+
+            <p class="etiqueta">GESTION DE MOTORES</p>
+
+            <h1 th:text="${titulo}">
+                Registrar motor
+            </h1>
+
+            <p class="descripcion">
+                Completa los datos del motor para
+                registrarlo o actualizar su informacion.
+            </p>
+
+        </section>
+
+        <!-- FORMULARIO -->
+        <section class="tarjeta-formulario">
+
+            <!-- MENSAJE DE ERROR -->
+            <div class="alerta error"
+                 th:if="${error}"
+                 th:text="${error}">
+            </div>
+
+            <form th:action="@{/motores/guardar}"
+                  th:object="${motor}"
+                  method="POST">
+
+                <!-- ID OCULTO -->
+                <input type="hidden"
+                       th:field="*{id}">
+
+                <!-- NUMERO DE SERIE -->
+                <div class="grupo-formulario">
+
+                    <label for="numeroSerie">
+                        Numero de serie
+                    </label>
+
+                    <input type="text"
+                           id="numeroSerie"
+                           th:field="*{numeroSerie}"
+                           placeholder="Ejemplo: MOT001"
+                           maxlength="30"
+                           required>
+
+                </div>
+
+                <!-- MARCA -->
+                <div class="grupo-formulario">
+
+                    <label for="marca">
+                        Marca del motor
+                    </label>
+
+                    <input type="text"
+                           id="marca"
+                           th:field="*{marca}"
+                           placeholder="Ejemplo: Toyota"
+                           maxlength="50"
+                           required>
+
+                </div>
+
+                <!-- TIPO -->
+                <div class="grupo-formulario">
+
+                    <label for="tipo">
+                        Tipo de motor
+                    </label>
+
+                    <input type="text"
+                           id="tipo"
+                           th:field="*{tipo}"
+                           placeholder="Ejemplo: Gasolina"
+                           maxlength="30"
+                           required>
+
+                </div>
+
+                <!-- POTENCIA -->
+                <div class="grupo-formulario">
+
+                    <label for="potencia">
+                        Potencia (HP)
+                    </label>
+
+                    <input type="number"
+                           id="potencia"
+                           th:field="*{potencia}"
+                           placeholder="Ejemplo: 150"
+                           min="1"
+                           step="1"
+                           required>
+
+                </div>
+
+                <!-- DISPONIBILIDAD -->
+                <div class="grupo-formulario">
+
+                    <label class="etiqueta-checkbox">
+
+                        <input type="checkbox"
+                               th:field="*{disponible}">
+
+                        Motor disponible
+
+                    </label>
+
+                    <p class="texto-ayuda">
+                        Marca esta casilla si el motor
+                        esta disponible para su uso.
+                    </p>
+
+                </div>
+
+                <!-- BOTONES -->
+                <div class="acciones-formulario">
+
+                    <button type="submit"
+                            class="boton-principal">
+                        Guardar motor
+                    </button>
+
+                    <a th:href="@{/motores}"
+                       class="boton-secundario">
+                        Cancelar
+                    </a>
+
+                </div>
+
+            </form>
+
+        </section>
+
+    </main>
+
+    <!-- PIE DE PAGINA -->
+    <footer class="pie-pagina">
+
+        <p>
+            Sistema Movilidad |
+            Proyecto academico Spring Boot
+        </p>
+
+    </footer>
+
+</body>
+</html>

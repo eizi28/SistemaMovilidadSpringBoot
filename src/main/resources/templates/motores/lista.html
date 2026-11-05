@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Gestión de Motores | Sistema Movilidad</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/estilos.css}">
+</head>
+
+<body>
+
+    <!-- ENCABEZADO -->
+    <header class="encabezado">
+        <div class="contenedor barra">
+
+            <a th:href="@{/carros}" class="logo">
+                Sistema Movilidad
+            </a>
+
+            <nav>
+                <a th:href="@{/carros}" class="enlace-menu">
+                    Carros
+                </a>
+
+                <a th:href="@{/motores}" class="enlace-menu">
+                    Motores
+                </a>
+            </nav>
+
+        </div>
+    </header>
+
+    <main class="contenedor contenido-principal">
+
+        <!-- TITULO -->
+        <section class="cabecera-pagina">
+
+            <div>
+                <p class="etiqueta">ADMINISTRACIÓN</p>
+
+                <h1>Gestión de motores</h1>
+
+                <p class="descripcion">
+                    Registra, consulta y administra los
+                    motores del sistema.
+                </p>
+            </div>
+
+            <a th:href="@{/motores/nuevo}"
+               class="boton-principal">
+                + Registrar motor
+            </a>
+
+        </section>
+
+        <!-- MENSAJES -->
+        <div class="alerta exito"
+             th:if="${mensaje}"
+             th:text="${mensaje}">
+        </div>
+
+        <div class="alerta error"
+             th:if="${error}"
+             th:text="${error}">
+        </div>
+
+        <!-- ESTADISTICAS -->
+        <section class="estadisticas">
+
+            <div class="tarjeta-estadistica">
+                <h3>Total de motores</h3>
+
+                <p th:text="${total}">0</p>
+            </div>
+
+            <div class="tarjeta-estadistica">
+                <h3>Motores disponibles</h3>
+
+                <p th:text="${disponibles}">0</p>
+            </div>
+
+        </section>
+
+        <!-- BUSCADOR -->
+        <section class="panel-busqueda">
+
+            <h2>Buscar motor</h2>
+
+            <form th:action="@{/motores}"
+                  method="GET"
+                  class="formulario-busqueda">
+
+                <input type="text"
+                       name="serie"
+                       placeholder="Número de serie"
+                       th:value="${serieBuscada}">
+
+                <button type="submit"
+                        class="boton-principal">
+                    Buscar
+                </button>
+
+                <a th:href="@{/motores}"
+                   class="boton-secundario">
+                    Ver todos
+                </a>
+
+            </form>
+        </section>
+
+        <!-- TABLA DE MOTORES -->
+        <section class="panel-tabla">
+
+            <h2>Motores registrados</h2>
+
+            <div th:if="${#lists.isEmpty(motores)}"
+                 class="mensaje-vacio">
+                No hay motores registrados.
+            </div>
+
+            <div class="tabla-responsive"
+                 th:unless="${#lists.isEmpty(motores)}">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Número de serie</th>
+                            <th>Marca</th>
+                            <th>Tipo</th>
+                            <th>Potencia</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr th:each="motor : ${motores}">
+
+                            <td th:text="${motor.id}"></td>
+
+                            <td th:text="${motor.numeroSerie}"></td>
+
+                            <td th:text="${motor.marca}"></td>
+
+                            <td th:text="${motor.tipo}"></td>
+
+                            <td th:text="|${motor.potencia} HP|"></td>
+
+                            <td th:text="${motor.disponible}
+                                ? 'Disponible'
+                                : 'No disponible'">
+                            </td>
+
+                            <td class="acciones">
+
+                                <!-- EDITAR -->
+                                <a class="boton-editar"
+                                   th:href="@{/motores/editar/{id}(id=${motor.id})}">
+                                    Editar
+                                </a>
+
+                                <!-- CAMBIAR ESTADO -->
+                                <form method="POST"
+                                      th:action="@{/motores/disponibilidad/{id}(id=${motor.id})}">
+
+                                    <input type="hidden"
+                                           name="disponible"
+                                           th:value="${!motor.disponible}">
+
+                                    <button type="submit"
+                                            class="boton-estado"
+                                            th:text="${motor.disponible}
+                                                ? 'Ocupar'
+                                                : 'Liberar'">
+                                    </button>
+                                </form>
+
+                                <!-- ELIMINAR -->
+                                <form method="POST"
+                                      th:action="@{/motores/eliminar/{id}(id=${motor.id})}"
+                                      onsubmit="return confirm('¿Eliminar este motor?');">
+
+                                    <button type="submit"
+                                            class="boton-eliminar">
+                                        Eliminar
+                                    </button>
+                                </form>
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="pie-pagina">
+        <p>
+            Sistema Movilidad |
+            Proyecto académico Spring Boot
+        </p>
+    </footer>
+
+</body>
+</html>

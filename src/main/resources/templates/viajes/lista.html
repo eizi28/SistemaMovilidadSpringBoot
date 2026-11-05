@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Gestión de Viajes | Sistema Movilidad</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/estilos.css}">
+</head>
+
+<body>
+
+<header class="encabezado">
+    <div class="contenedor barra">
+
+        <a th:href="@{/viajes}" class="logo">
+            Sistema Movilidad
+        </a>
+
+        <nav>
+            <a th:href="@{/carros}">Carros</a>
+            <a th:href="@{/motores}">Motores</a>
+            <a th:href="@{/choferes}">Choferes</a>
+            <a th:href="@{/pasajeros}">Pasajeros</a>
+            <a th:href="@{/viajes}">Viajes</a>
+        </nav>
+
+    </div>
+</header>
+
+<main class="contenedor contenido-principal">
+
+    <!-- ENCABEZADO -->
+    <section class="cabecera-pagina">
+
+        <div>
+            <p class="etiqueta">ADMINISTRACIÓN</p>
+
+            <h1>Gestión de viajes</h1>
+
+            <p class="descripcion">
+                Registra, consulta y administra los viajes
+                del sistema de movilidad.
+            </p>
+        </div>
+
+        <a th:href="@{/viajes/nuevo}"
+           class="boton-principal">
+            + Registrar viaje
+        </a>
+
+    </section>
+
+    <!-- MENSAJES -->
+    <div th:if="${mensaje}"
+         class="alerta exito"
+         th:text="${mensaje}">
+    </div>
+
+    <div th:if="${error}"
+         class="alerta error"
+         th:text="${error}">
+    </div>
+
+    <!-- ESTADISTICAS -->
+    <section class="estadisticas">
+
+        <div class="tarjeta-estadistica">
+            <h3>Total de viajes</h3>
+            <p th:text="${total}">0</p>
+        </div>
+
+        <div class="tarjeta-estadistica">
+            <h3>Viajes programados</h3>
+            <p th:text="${programados}">0</p>
+        </div>
+
+        <div class="tarjeta-estadistica">
+            <h3>Viajes finalizados</h3>
+            <p th:text="${finalizados}">0</p>
+        </div>
+
+    </section>
+
+    <!-- FILTRAR VIAJES -->
+    <section class="panel-busqueda">
+
+        <h2>Buscar viajes por estado</h2>
+
+        <form th:action="@{/viajes}"
+              method="GET"
+              class="formulario-busqueda">
+
+            <select name="estado">
+
+                <option value="">
+                    Todos los estados
+                </option>
+
+                <option value="PROGRAMADO"
+                        th:selected="${estadoBuscado == 'PROGRAMADO'}">
+                    Programado
+                </option>
+
+                <option value="EN_CURSO"
+                        th:selected="${estadoBuscado == 'EN_CURSO'}">
+                    En curso
+                </option>
+
+                <option value="FINALIZADO"
+                        th:selected="${estadoBuscado == 'FINALIZADO'}">
+                    Finalizado
+                </option>
+
+                <option value="CANCELADO"
+                        th:selected="${estadoBuscado == 'CANCELADO'}">
+                    Cancelado
+                </option>
+
+            </select>
+
+            <button type="submit"
+                    class="boton-principal">
+                Buscar
+            </button>
+
+            <a th:href="@{/viajes}"
+               class="boton-secundario">
+                Ver todos
+            </a>
+
+        </form>
+
+    </section>
+
+    <!-- TABLA DE VIAJES -->
+    <section class="panel-tabla">
+
+        <h2>Viajes registrados</h2>
+
+        <div th:if="${#lists.isEmpty(viajes)}"
+             class="mensaje-vacio">
+            No hay viajes registrados.
+        </div>
+
+        <div class="tabla-responsive"
+             th:unless="${#lists.isEmpty(viajes)}">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Origen</th>
+                        <th>Destino</th>
+                        <th>Fecha y hora</th>
+                        <th>Carro</th>
+                        <th>Chofer</th>
+                        <th>Pasajero</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr th:each="viaje : ${viajes}">
+
+                        <td th:text="${viaje.id}"></td>
+
+                        <td th:text="${viaje.origen}"></td>
+
+                        <td th:text="${viaje.destino}"></td>
+
+                        <td th:text="${#temporals.format(viaje.fecha, 'dd/MM/yyyy HH:mm')}">
+                        </td>
+
+                        <td th:text="${viaje.carro.placa}">
+                        </td>
+
+                        <td th:text="|${viaje.chofer.nombre} ${viaje.chofer.apellido}|">
+                        </td>
+
+                        <td th:text="|${viaje.pasajero.nombre} ${viaje.pasajero.apellido}|">
+                        </td>
+
+                        <td th:text="${viaje.estado}">
+                        </td>
+
+                        <td class="acciones">
+
+                            <!-- EDITAR -->
+                            <a class="boton-editar"
+                               th:href="@{/viajes/editar/{id}(id=${viaje.id})}">
+                                Editar
+                            </a>
+
+                            <!-- CAMBIAR ESTADO -->
+                            <form method="POST"
+                                  th:action="@{/viajes/estado/{id}(id=${viaje.id})}">
+
+                                <select name="estado">
+
+                                    <option value="PROGRAMADO"
+                                            th:selected="${viaje.estado == 'PROGRAMADO'}">
+                                        Programado
+                                    </option>
+
+                                    <option value="EN_CURSO"
+                                            th:selected="${viaje.estado == 'EN_CURSO'}">
+                                        En curso
+                                    </option>
+
+                                    <option value="FINALIZADO"
+                                            th:selected="${viaje.estado == 'FINALIZADO'}">
+                                        Finalizado
+                                    </option>
+
+                                    <option value="CANCELADO"
+                                            th:selected="${viaje.estado == 'CANCELADO'}">
+                                        Cancelado
+                                    </option>
+
+                                </select>
+
+                                <button type="submit"
+                                        class="boton-estado">
+                                    Actualizar
+                                </button>
+
+                            </form>
+
+                            <!-- ELIMINAR -->
+                            <form method="POST"
+                                  th:action="@{/viajes/eliminar/{id}(id=${viaje.id})}"
+                                  onsubmit="return confirm('¿Eliminar este viaje?');">
+
+                                <button type="submit"
+                                        class="boton-eliminar">
+                                    Eliminar
+                                </button>
+
+                            </form>
+
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+    </section>
+
+</main>
+
+<footer class="pie-pagina">
+    <p>Sistema Movilidad | Proyecto Spring Boot</p>
+</footer>
+
+</body>
+</html>

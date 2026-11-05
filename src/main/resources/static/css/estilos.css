@@ -1,0 +1,456 @@
+/* ========================================
+   SISTEMA MOVILIDAD - ESTILOS GENERALES
+======================================== */
+
+:root {
+    --primario: #4f46e5;
+    --secundario: #7c3aed;
+    --oscuro: #172033;
+    --gris: #64748b;
+    --fondo: #f5f7fc;
+    --blanco: #ffffff;
+    --borde: #e2e8f0;
+    --verde: #15803d;
+    --rojo: #dc2626;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: var(--fondo);
+    color: var(--oscuro);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.contenedor {
+    width: 92%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+a {
+    text-decoration: none;
+}
+
+button, input {
+    font-family: inherit;
+}
+
+/* ========================================
+   ENCABEZADO
+======================================== */
+
+.encabezado {
+    background: white;
+    padding: 20px 0;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.06);
+}
+
+.barra {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo {
+    font-size: 23px;
+    font-weight: bold;
+    color: var(--primario);
+}
+
+.enlace-menu {
+    color: var(--oscuro);
+    font-weight: bold;
+}
+
+.enlace-menu:hover {
+    color: var(--primario);
+}
+
+/* ========================================
+   CONTENIDO PRINCIPAL
+======================================== */
+
+.contenido-principal {
+    flex: 1;
+    padding-top: 45px;
+    padding-bottom: 70px;
+}
+
+.cabecera-pagina {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.etiqueta {
+    color: var(--primario);
+    font-size: 12px;
+    letter-spacing: 2px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+h1 {
+    font-size: 34px;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 22px;
+    margin-bottom: 18px;
+}
+
+.descripcion {
+    color: var(--gris);
+    font-size: 15px;
+}
+
+/* ========================================
+   BOTONES
+======================================== */
+
+.boton-principal {
+    display: inline-block;
+    background: linear-gradient(
+        135deg,
+        var(--primario),
+        var(--secundario)
+    );
+    color: white;
+    padding: 13px 22px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.boton-principal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(79, 70, 229, 0.2);
+}
+
+.boton-secundario {
+    display: inline-block;
+    padding: 12px 20px;
+    background: #eef2ff;
+    color: var(--primario);
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.boton-secundario:hover {
+    background: #e0e7ff;
+}
+
+/* ========================================
+   ESTADISTICAS
+======================================== */
+
+.estadisticas {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+    margin-bottom: 30px;
+}
+
+.tarjeta-estadistica {
+    background: white;
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.04);
+}
+
+.tarjeta-estadistica h3 {
+    color: var(--gris);
+    font-size: 15px;
+    margin-bottom: 10px;
+}
+
+.tarjeta-estadistica p {
+    color: var(--primario);
+    font-size: 35px;
+    font-weight: bold;
+}
+
+/* ========================================
+   BUSCADOR
+======================================== */
+
+.panel-busqueda,
+.panel-tabla,
+.tarjeta-formulario {
+    background: white;
+    padding: 30px;
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.04);
+}
+
+.panel-busqueda {
+    margin-bottom: 30px;
+}
+
+.formulario-busqueda {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.formulario-busqueda input {
+    flex: 1;
+    min-width: 200px;
+    padding: 13px;
+    border: 1px solid var(--borde);
+    border-radius: 9px;
+    font-size: 14px;
+}
+
+/* ========================================
+   TABLA DE VEHICULOS
+======================================== */
+
+.tabla-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+thead {
+    background: #eef2ff;
+}
+
+th {
+    padding: 15px;
+    color: #4338ca;
+    font-size: 13px;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid var(--borde);
+    font-size: 14px;
+}
+
+tbody tr:hover {
+    background: #f8faff;
+}
+
+.acciones {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.acciones form {
+    margin: 0;
+}
+
+.boton-editar,
+.boton-estado,
+.boton-eliminar {
+    display: inline-block;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.boton-editar {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.boton-estado {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.boton-eliminar {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.mensaje-vacio {
+    padding: 35px;
+    text-align: center;
+    color: var(--gris);
+    background: #f8fafc;
+    border-radius: 10px;
+}
+
+/* ========================================
+   FORMULARIO DE VEHICULOS
+======================================== */
+
+.contenido-formulario {
+    flex: 1;
+    width: 92%;
+    max-width: 750px;
+    padding-top: 50px;
+    padding-bottom: 70px;
+}
+
+.cabecera-formulario {
+    margin-bottom: 30px;
+}
+
+.tarjeta-formulario {
+    padding: 40px;
+}
+
+.grupo-formulario {
+    margin-bottom: 24px;
+}
+
+.grupo-formulario label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.grupo-formulario input[type="text"] {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+.grupo-formulario input:focus {
+    outline: 2px solid rgba(79, 70, 229, 0.15);
+    border-color: var(--primario);
+}
+
+.etiqueta-checkbox {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.etiqueta-checkbox input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primario);
+}
+
+.texto-ayuda {
+    font-size: 12px;
+    color: var(--gris);
+    margin-top: 8px;
+}
+
+.acciones-formulario {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+/* ========================================
+   MENSAJES
+======================================== */
+
+.alerta {
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    font-size: 14px;
+}
+
+.alerta.exito {
+    background: #dcfce7;
+    color: var(--verde);
+    border: 1px solid #86efac;
+}
+
+.alerta.error {
+    background: #fee2e2;
+    color: var(--rojo);
+    border: 1px solid #fca5a5;
+}
+
+/* ========================================
+   PIE DE PAGINA
+======================================== */
+
+.pie-pagina {
+    background: var(--oscuro);
+    color: white;
+    text-align: center;
+    padding: 25px;
+    font-size: 13px;
+}
+
+/* ========================================
+   DISEÑO PARA CELULARES
+======================================== */
+
+@media (max-width: 768px) {
+
+    .cabecera-pagina {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    h1 {
+        font-size: 27px;
+    }
+
+    .estadisticas {
+        grid-template-columns: 1fr;
+    }
+
+    .panel-busqueda,
+    .panel-tabla,
+    .tarjeta-formulario {
+        padding: 22px;
+    }
+
+    .formulario-busqueda {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .formulario-busqueda input {
+        flex: auto;
+        width: 100%;
+    }
+
+    .acciones-formulario {
+        flex-direction: column;
+    }
+
+    .logo {
+        font-size: 19px;
+    }
+}

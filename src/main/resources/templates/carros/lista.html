@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Gestión de Carros | Sistema Movilidad</title>
+
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+
+<body>
+
+    <!-- ENCABEZADO -->
+    <header class="encabezado">
+        <div class="contenedor barra">
+
+            <a th:href="@{/carros}" class="logo">
+                Sistema Movilidad
+            </a>
+
+            <nav>
+                <a th:href="@{/carros}" class="enlace-menu">
+                    Vehículos
+                </a>
+            </nav>
+
+        </div>
+    </header>
+
+    <main class="contenedor contenido-principal">
+
+        <!-- TITULO -->
+        <section class="cabecera-pagina">
+
+            <div>
+                <p class="etiqueta">ADMINISTRACIÓN</p>
+
+                <h1>Gestión de vehículos</h1>
+
+                <p class="descripcion">
+                    Registra, consulta, actualiza y administra
+                    los vehículos del sistema.
+                </p>
+            </div>
+
+            <a th:href="@{/carros/nuevo}"
+               class="boton-principal">
+                + Registrar carro
+            </a>
+
+        </section>
+
+        <!-- MENSAJES -->
+        <div class="alerta exito"
+             th:if="${mensaje}"
+             th:text="${mensaje}">
+        </div>
+
+        <div class="alerta error"
+             th:if="${error}"
+             th:text="${error}">
+        </div>
+
+        <!-- ESTADISTICAS -->
+        <section class="estadisticas">
+
+            <div class="tarjeta-estadistica">
+                <h3>Total de vehículos</h3>
+
+                <p th:text="${total}">0</p>
+            </div>
+
+            <div class="tarjeta-estadistica">
+                <h3>Vehículos disponibles</h3>
+
+                <p th:text="${disponibles}">0</p>
+            </div>
+
+        </section>
+
+        <!-- BUSCADOR -->
+        <section class="panel-busqueda">
+
+            <h2>Buscar vehículo</h2>
+
+            <form th:action="@{/carros}"
+                  method="GET"
+                  class="formulario-busqueda">
+
+                <input
+                    type="text"
+                    name="placa"
+                    placeholder="Ingresa la placa"
+                    th:value="${placaBuscada}">
+
+                <button type="submit"
+                        class="boton-principal">
+                    Buscar
+                </button>
+
+                <a th:href="@{/carros}"
+                   class="boton-secundario">
+                    Ver todos
+                </a>
+
+            </form>
+
+        </section>
+
+        <!-- LISTADO DE VEHICULOS -->
+        <section class="panel-tabla">
+
+            <h2>Vehículos registrados</h2>
+
+            <!-- CONDICIONAL -->
+            <div th:if="${#lists.isEmpty(carros)}"
+                 class="mensaje-vacio">
+
+                No se encontraron vehículos registrados.
+
+            </div>
+
+            <!-- TABLA -->
+            <div class="tabla-responsive"
+                 th:unless="${#lists.isEmpty(carros)}">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Placa</th>
+                            <th>Marca</th>
+                            <th>Modelo</th>
+                            <th>Color</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <!-- BUCLE THYMELEAF -->
+                        <tr th:each="carro : ${carros}">
+
+                            <td th:text="${carro.id}"></td>
+
+                            <td th:text="${carro.placa}"></td>
+
+                            <td th:text="${carro.marca}"></td>
+
+                            <td th:text="${carro.modelo}"></td>
+
+                            <td th:text="${carro.color}"></td>
+
+                            <td>
+                                <span th:text="${carro.disponible
+                                    ? 'Disponible'
+                                    : 'No disponible'}">
+                                </span>
+                            </td>
+
+                            <td class="acciones">
+
+                                <!-- EDITAR -->
+                                <a th:href="@{/carros/editar/{id}
+                                    (id=${carro.id})}"
+                                   class="boton-editar">
+                                    Editar
+                                </a>
+
+                                <!-- CAMBIAR DISPONIBILIDAD -->
+                                <form method="POST"
+                                      th:action="@{/carros/disponibilidad/{id}
+                                      (id=${carro.id})}">
+
+                                    <input type="hidden"
+                                           name="disponible"
+                                           th:value="${!carro.disponible}">
+
+                                    <button type="submit"
+                                            class="boton-estado"
+                                            th:text="${carro.disponible
+                                                ? 'Ocupar'
+                                                : 'Liberar'}">
+                                    </button>
+
+                                </form>
+
+                                <!-- ELIMINAR -->
+                                <form method="POST"
+                                      th:action="@{/carros/eliminar/{id}
+                                      (id=${carro.id})}"
+                                      onsubmit="return confirm('¿Eliminar este vehículo?');">
+
+                                    <button type="submit"
+                                            class="boton-eliminar">
+                                        Eliminar
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="pie-pagina">
+
+        <p>
+            Sistema Movilidad |
+            Proyecto académico Spring Boot
+        </p>
+
+    </footer>
+
+</body>
+</html>

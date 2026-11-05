@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Choferes</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+
+<header class="encabezado">
+    <div class="contenedor barra">
+        <a th:href="@{/choferes}" class="logo">
+            Sistema Movilidad
+        </a>
+        <nav>
+            <a th:href="@{/carros}">Carros</a>
+            <a th:href="@{/motores}">Motores</a>
+            <a th:href="@{/choferes}">Choferes</a>
+        </nav>
+    </div>
+</header>
+
+<main class="contenedor contenido-formulario">
+
+    <section class="cabecera-formulario">
+        <p class="etiqueta">GESTIÓN DE CHOFERES</p>
+        <h1 th:text="${titulo}">Registrar chofer</h1>
+        <p class="descripcion">
+            Completa los datos del conductor.
+        </p>
+    </section>
+
+    <section class="tarjeta-formulario">
+
+        <div th:if="${error}" class="alerta error"
+             th:text="${error}"></div>
+
+        <form th:action="@{/choferes/guardar}"
+              th:object="${chofer}" method="POST">
+
+            <input type="hidden" th:field="*{id}">
+
+            <div class="grupo-formulario">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre"
+                       th:field="*{nombre}"
+                       placeholder="Ejemplo: Carlos"
+                       maxlength="50" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="apellido">Apellido</label>
+                <input type="text" id="apellido"
+                       th:field="*{apellido}"
+                       placeholder="Ejemplo: Gómez"
+                       maxlength="50" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="documento">
+                    Número de documento
+                </label>
+                <input type="text" id="documento"
+                       th:field="*{documento}"
+                       placeholder="Ejemplo: 1234567890"
+                       maxlength="20" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="licencia">
+                    Licencia de conducción
+                </label>
+                <input type="text" id="licencia"
+                       th:field="*{licencia}"
+                       placeholder="Ejemplo: LIC001"
+                       maxlength="30" required>
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="telefono">Teléfono</label>
+                <input type="tel" id="telefono"
+                       th:field="*{telefono}"
+                       placeholder="Ejemplo: 3001234567"
+                       maxlength="20">
+            </div>
+
+            <div class="grupo-formulario">
+                <label class="etiqueta-checkbox">
+                    <input type="checkbox"
+                           th:field="*{disponible}">
+                    Chofer disponible
+                </label>
+            </div>
+
+            <div class="acciones-formulario">
+                <button type="submit"
+                        class="boton-principal">
+                    Guardar chofer
+                </button>
+
+                <a th:href="@{/choferes}"
+                   class="boton-secundario">
+                    Cancelar
+                </a>
+            </div>
+
+        </form>
+    </section>
+
+</main>
+
+<footer class="pie-pagina">
+    <p>Sistema Movilidad | Proyecto Spring Boot</p>
+</footer>
+
+</body>
+</html>

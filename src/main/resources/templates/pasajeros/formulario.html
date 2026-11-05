@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Pasajeros</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+
+<header class="encabezado">
+    <div class="contenedor barra">
+        <a th:href="@{/pasajeros}" class="logo">
+            Sistema Movilidad
+        </a>
+
+        <nav>
+            <a th:href="@{/carros}">Carros</a>
+            <a th:href="@{/motores}">Motores</a>
+            <a th:href="@{/choferes}">Choferes</a>
+            <a th:href="@{/pasajeros}">Pasajeros</a>
+        </nav>
+    </div>
+</header>
+
+<main class="contenedor contenido-formulario">
+
+    <section class="cabecera-formulario">
+
+        <p class="etiqueta">GESTIÓN DE PASAJEROS</p>
+
+        <h1 th:text="${titulo}">
+            Registrar pasajero
+        </h1>
+
+        <p class="descripcion">
+            Completa la información del pasajero
+            para registrarlo o actualizar sus datos.
+        </p>
+
+    </section>
+
+    <section class="tarjeta-formulario">
+
+        <!-- MENSAJE DE ERROR -->
+        <div class="alerta error"
+             th:if="${error}"
+             th:text="${error}">
+        </div>
+
+        <form th:action="@{/pasajeros/guardar}"
+              th:object="${pasajero}"
+              method="POST">
+
+            <!-- ID -->
+            <input type="hidden" th:field="*{id}">
+
+            <!-- NOMBRE -->
+            <div class="grupo-formulario">
+                <label for="nombre">
+                    Nombre
+                </label>
+
+                <input type="text"
+                       id="nombre"
+                       th:field="*{nombre}"
+                       placeholder="Ejemplo: María"
+                       maxlength="50"
+                       required>
+            </div>
+
+            <!-- APELLIDO -->
+            <div class="grupo-formulario">
+                <label for="apellido">
+                    Apellido
+                </label>
+
+                <input type="text"
+                       id="apellido"
+                       th:field="*{apellido}"
+                       placeholder="Ejemplo: Rodríguez"
+                       maxlength="50"
+                       required>
+            </div>
+
+            <!-- DOCUMENTO -->
+            <div class="grupo-formulario">
+                <label for="documento">
+                    Número de documento
+                </label>
+
+                <input type="text"
+                       id="documento"
+                       th:field="*{documento}"
+                       placeholder="Ejemplo: 1098765432"
+                       maxlength="20"
+                       required>
+            </div>
+
+            <!-- TELEFONO -->
+            <div class="grupo-formulario">
+                <label for="telefono">
+                    Teléfono
+                </label>
+
+                <input type="tel"
+                       id="telefono"
+                       th:field="*{telefono}"
+                       placeholder="Ejemplo: 3101234567"
+                       maxlength="20">
+            </div>
+
+            <!-- CORREO -->
+            <div class="grupo-formulario">
+                <label for="correo">
+                    Correo electrónico
+                </label>
+
+                <input type="email"
+                       id="correo"
+                       th:field="*{correo}"
+                       placeholder="Ejemplo: maria@correo.com"
+                       maxlength="100">
+            </div>
+
+            <!-- BOTONES -->
+            <div class="acciones-formulario">
+
+                <button type="submit"
+                        class="boton-principal">
+                    Guardar pasajero
+                </button>
+
+                <a th:href="@{/pasajeros}"
+                   class="boton-secundario">
+                    Cancelar
+                </a>
+
+            </div>
+        </form>
+
+    </section>
+
+</main>
+
+<footer class="pie-pagina">
+    <p>Sistema Movilidad | Proyecto Spring Boot</p>
+</footer>
+
+</body>
+</html>

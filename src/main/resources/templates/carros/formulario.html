@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Formulario de Vehículos | Sistema Movilidad</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/estilos.css}">
+</head>
+
+<body>
+
+    <!-- ENCABEZADO -->
+    <header class="encabezado">
+
+        <div class="contenedor barra">
+
+            <a th:href="@{/carros}" class="logo">
+                Sistema Movilidad
+            </a>
+
+            <nav>
+                <a th:href="@{/carros}"
+                   class="enlace-menu">
+                    Volver a vehículos
+                </a>
+            </nav>
+
+        </div>
+
+    </header>
+
+    <main class="contenedor contenido-formulario">
+
+        <!-- TITULO DEL FORMULARIO -->
+        <section class="cabecera-formulario">
+
+            <p class="etiqueta">GESTIÓN DE VEHÍCULOS</p>
+
+            <h1 th:text="${titulo}">
+                Registrar carro
+            </h1>
+
+            <p class="descripcion">
+                Completa la información del vehículo
+                para guardarlo en el sistema.
+            </p>
+
+        </section>
+
+        <!-- TARJETA DEL FORMULARIO -->
+        <section class="tarjeta-formulario">
+
+            <!-- MENSAJE DE ERROR -->
+            <div class="alerta error"
+                 th:if="${error}"
+                 th:text="${error}">
+            </div>
+
+            <!-- FORMULARIO -->
+            <form th:action="@{/carros/guardar}"
+                  th:object="${carro}"
+                  method="POST">
+
+                <!-- ID OCULTO PARA EDICION -->
+                <input type="hidden"
+                       th:field="*{id}">
+
+                <!-- PLACA -->
+                <div class="grupo-formulario">
+
+                    <label for="placa">
+                        Placa del vehículo
+                    </label>
+
+                    <input
+                        type="text"
+                        id="placa"
+                        th:field="*{placa}"
+                        placeholder="Ejemplo: ABC123"
+                        maxlength="15"
+                        required>
+
+                </div>
+
+                <!-- MARCA -->
+                <div class="grupo-formulario">
+
+                    <label for="marca">
+                        Marca
+                    </label>
+
+                    <input
+                        type="text"
+                        id="marca"
+                        th:field="*{marca}"
+                        placeholder="Ejemplo: Toyota"
+                        maxlength="60"
+                        required>
+
+                </div>
+
+                <!-- MODELO -->
+                <div class="grupo-formulario">
+
+                    <label for="modelo">
+                        Modelo
+                    </label>
+
+                    <input
+                        type="text"
+                        id="modelo"
+                        th:field="*{modelo}"
+                        placeholder="Ejemplo: Corolla 2024"
+                        maxlength="60"
+                        required>
+
+                </div>
+
+                <!-- COLOR -->
+                <div class="grupo-formulario">
+
+                    <label for="color">
+                        Color
+                    </label>
+
+                    <input
+                        type="text"
+                        id="color"
+                        th:field="*{color}"
+                        placeholder="Ejemplo: Blanco"
+                        maxlength="40"
+                        required>
+
+                </div>
+
+                <!-- DISPONIBILIDAD -->
+                <div class="grupo-formulario">
+
+                    <label class="etiqueta-checkbox">
+
+                        <input
+                            type="checkbox"
+                            th:field="*{disponible}">
+
+                        Vehículo disponible
+
+                    </label>
+
+                    <p class="texto-ayuda">
+                        Marca esta opción si el vehículo
+                        está disponible para utilizarse.
+                    </p>
+
+                </div>
+
+                <!-- BOTONES -->
+                <div class="acciones-formulario">
+
+                    <button type="submit"
+                            class="boton-principal">
+
+                        Guardar vehículo
+
+                    </button>
+
+                    <a th:href="@{/carros}"
+                       class="boton-secundario">
+
+                        Cancelar
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </section>
+
+    </main>
+
+    <!-- PIE DE PAGINA -->
+    <footer class="pie-pagina">
+
+        <p>
+            Sistema Movilidad |
+            Proyecto académico Spring Boot
+        </p>
+
+    </footer>
+
+</body>
+</html>

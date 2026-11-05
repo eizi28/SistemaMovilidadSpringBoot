@@ -1,0 +1,14 @@
+# Archivos generados por Maven
+target/
+
+# Base de datos local H2
+movilidad_db*
+
+# Configuración de editores
+.vscode/
+.idea/
+
+# Archivos temporales
+*.log
+*.tmp
+.DS_Store

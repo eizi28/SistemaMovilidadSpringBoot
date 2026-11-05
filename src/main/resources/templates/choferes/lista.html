@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Choferes</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+
+<header class="encabezado">
+    <div class="contenedor barra">
+        <a th:href="@{/choferes}" class="logo">
+            Sistema Movilidad
+        </a>
+        <nav>
+            <a th:href="@{/carros}">Carros</a>
+            <a th:href="@{/motores}">Motores</a>
+            <a th:href="@{/choferes}">Choferes</a>
+        </nav>
+    </div>
+</header>
+
+<main class="contenedor contenido-principal">
+
+    <section class="cabecera-pagina">
+        <div>
+            <p class="etiqueta">ADMINISTRACIÓN</p>
+            <h1>Gestión de choferes</h1>
+            <p class="descripcion">
+                Registra y administra los conductores.
+            </p>
+        </div>
+        <a th:href="@{/choferes/nuevo}"
+           class="boton-principal">
+            + Registrar chofer
+        </a>
+    </section>
+
+    <div th:if="${mensaje}" class="alerta exito"
+         th:text="${mensaje}"></div>
+
+    <div th:if="${error}" class="alerta error"
+         th:text="${error}"></div>
+
+    <section class="estadisticas">
+        <div class="tarjeta-estadistica">
+            <h3>Total de choferes</h3>
+            <p th:text="${total}">0</p>
+        </div>
+
+        <div class="tarjeta-estadistica">
+            <h3>Choferes disponibles</h3>
+            <p th:text="${disponibles}">0</p>
+        </div>
+    </section>
+
+    <section class="panel-busqueda">
+        <h2>Buscar chofer</h2>
+
+        <form th:action="@{/choferes}" method="GET"
+              class="formulario-busqueda">
+
+            <input type="text" name="documento"
+                   placeholder="Número de documento"
+                   th:value="${documentoBuscado}">
+
+            <button type="submit" class="boton-principal">
+                Buscar
+            </button>
+
+            <a th:href="@{/choferes}"
+               class="boton-secundario">
+                Ver todos
+            </a>
+        </form>
+    </section>
+
+    <section class="panel-tabla">
+        <h2>Choferes registrados</h2>
+
+        <div th:if="${#lists.isEmpty(choferes)}"
+             class="mensaje-vacio">
+            No hay choferes registrados.
+        </div>
+
+        <div class="tabla-responsive"
+             th:unless="${#lists.isEmpty(choferes)}">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Documento</th>
+                        <th>Licencia</th>
+                        <th>Teléfono</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="chofer : ${choferes}">
+                        <td th:text="${chofer.id}"></td>
+                        <td th:text="${chofer.nombre}"></td>
+                        <td th:text="${chofer.apellido}"></td>
+                        <td th:text="${chofer.documento}"></td>
+                        <td th:text="${chofer.licencia}"></td>
+                        <td th:text="${chofer.telefono}"></td>
+
+                        <td th:text="${chofer.disponible}
+                            ? 'Disponible' : 'Ocupado'">
+                        </td>
+
+                        <td class="acciones">
+
+                            <a class="boton-editar"
+                               th:href="@{/choferes/editar/{id}(id=${chofer.id})}">
+                                Editar
+                            </a>
+
+                            <form method="POST"
+                                  th:action="@{/choferes/disponibilidad/{id}(id=${chofer.id})}">
+
+                                <input type="hidden"
+                                       name="disponible"
+                                       th:value="${!chofer.disponible}">
+
+                                <button type="submit"
+                                        class="boton-estado"
+                                        th:text="${chofer.disponible}
+                                            ? 'Ocupar' : 'Liberar'">
+                                </button>
+                            </form>
+
+                            <form method="POST"
+                                  th:action="@{/choferes/eliminar/{id}(id=${chofer.id})}"
+                                  onsubmit="return confirm('¿Eliminar este chofer?');">
+
+                                <button type="submit"
+                                        class="boton-eliminar">
+                                    Eliminar
+                                </button>
+                            </form>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</main>
+
+<footer class="pie-pagina">
+    <p>Sistema Movilidad | Proyecto Spring Boot</p>
+</footer>
+
+</body>
+</html>

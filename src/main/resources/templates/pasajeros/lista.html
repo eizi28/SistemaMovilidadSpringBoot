@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Pasajeros | Sistema Movilidad</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+
+<header class="encabezado">
+    <div class="contenedor barra">
+        <a th:href="@{/pasajeros}" class="logo">
+            Sistema Movilidad
+        </a>
+
+        <nav>
+            <a th:href="@{/carros}">Carros</a>
+            <a th:href="@{/motores}">Motores</a>
+            <a th:href="@{/choferes}">Choferes</a>
+            <a th:href="@{/pasajeros}">Pasajeros</a>
+        </nav>
+    </div>
+</header>
+
+<main class="contenedor contenido-principal">
+
+    <section class="cabecera-pagina">
+        <div>
+            <p class="etiqueta">ADMINISTRACIÓN</p>
+            <h1>Gestión de pasajeros</h1>
+            <p class="descripcion">
+                Registra, consulta y administra los
+                pasajeros del sistema.
+            </p>
+        </div>
+
+        <a th:href="@{/pasajeros/nuevo}"
+           class="boton-principal">
+            + Registrar pasajero
+        </a>
+    </section>
+
+    <!-- MENSAJES -->
+    <div class="alerta exito"
+         th:if="${mensaje}"
+         th:text="${mensaje}">
+    </div>
+
+    <div class="alerta error"
+         th:if="${error}"
+         th:text="${error}">
+    </div>
+
+    <!-- TOTAL DE PASAJEROS -->
+    <section class="estadisticas">
+        <div class="tarjeta-estadistica">
+            <h3>Total de pasajeros</h3>
+            <p th:text="${total}">0</p>
+        </div>
+    </section>
+
+    <!-- BUSCAR PASAJERO -->
+    <section class="panel-busqueda">
+
+        <h2>Buscar pasajero</h2>
+
+        <form th:action="@{/pasajeros}"
+              method="GET"
+              class="formulario-busqueda">
+
+            <input type="text"
+                   name="documento"
+                   placeholder="Número de documento"
+                   th:value="${documentoBuscado}">
+
+            <button type="submit"
+                    class="boton-principal">
+                Buscar
+            </button>
+
+            <a th:href="@{/pasajeros}"
+               class="boton-secundario">
+                Ver todos
+            </a>
+        </form>
+    </section>
+
+    <!-- TABLA DE PASAJEROS -->
+    <section class="panel-tabla">
+
+        <h2>Pasajeros registrados</h2>
+
+        <div th:if="${#lists.isEmpty(pasajeros)}"
+             class="mensaje-vacio">
+            No hay pasajeros registrados.
+        </div>
+
+        <div class="tabla-responsive"
+             th:unless="${#lists.isEmpty(pasajeros)}">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Documento</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="pasajero : ${pasajeros}">
+
+                        <td th:text="${pasajero.id}"></td>
+
+                        <td th:text="${pasajero.nombre}"></td>
+
+                        <td th:text="${pasajero.apellido}"></td>
+
+                        <td th:text="${pasajero.documento}"></td>
+
+                        <td th:text="${pasajero.telefono}"></td>
+
+                        <td th:text="${pasajero.correo}"></td>
+
+                        <td class="acciones">
+
+                            <!-- EDITAR -->
+                            <a class="boton-editar"
+                               th:href="@{/pasajeros/editar/{id}(id=${pasajero.id})}">
+                                Editar
+                            </a>
+
+                            <!-- ELIMINAR -->
+                            <form method="POST"
+                                  th:action="@{/pasajeros/eliminar/{id}(id=${pasajero.id})}"
+                                  onsubmit="return confirm('¿Eliminar este pasajero?');">
+
+                                <button type="submit"
+                                        class="boton-eliminar">
+                                    Eliminar
+                                </button>
+                            </form>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</main>
+
+<footer class="pie-pagina">
+    <p>Sistema Movilidad | Proyecto Spring Boot</p>
+</footer>
+
+</body>
+</html>

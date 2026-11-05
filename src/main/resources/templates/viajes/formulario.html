@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Formulario de Viajes | Sistema Movilidad</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/estilos.css}">
+</head>
+
+<body>
+
+<header class="encabezado">
+    <div class="contenedor barra">
+
+        <a th:href="@{/viajes}" class="logo">
+            Sistema Movilidad
+        </a>
+
+        <nav>
+            <a th:href="@{/carros}">Carros</a>
+            <a th:href="@{/motores}">Motores</a>
+            <a th:href="@{/choferes}">Choferes</a>
+            <a th:href="@{/pasajeros}">Pasajeros</a>
+            <a th:href="@{/viajes}">Viajes</a>
+        </nav>
+
+    </div>
+</header>
+
+<main class="contenedor contenido-formulario">
+
+    <!-- TITULO -->
+    <section class="cabecera-formulario">
+
+        <p class="etiqueta">GESTIÓN DE VIAJES</p>
+
+        <h1 th:text="${titulo}">
+            Registrar viaje
+        </h1>
+
+        <p class="descripcion">
+            Completa los datos del recorrido y
+            selecciona el carro, chofer y pasajero.
+        </p>
+
+    </section>
+
+    <section class="tarjeta-formulario">
+
+        <!-- ERRORES -->
+        <div th:if="${error}"
+             class="alerta error"
+             th:text="${error}">
+        </div>
+
+        <!-- INFORMACION PREVIA -->
+        <div class="alerta error"
+             th:if="${#lists.isEmpty(carros) or #lists.isEmpty(choferes) or #lists.isEmpty(pasajeros)}">
+
+            Antes de registrar un viaje necesitas
+            tener al menos un carro, un chofer
+            y un pasajero registrados.
+
+        </div>
+
+        <form th:action="@{/viajes/guardar}"
+              th:object="${viaje}"
+              method="POST">
+
+            <!-- ID -->
+            <input type="hidden" th:field="*{id}">
+
+            <!-- ORIGEN -->
+            <div class="grupo-formulario">
+
+                <label for="origen">
+                    Lugar de origen
+                </label>
+
+                <input type="text"
+                       id="origen"
+                       th:field="*{origen}"
+                       placeholder="Ejemplo: Cúcuta"
+                       maxlength="100"
+                       required>
+
+            </div>
+
+            <!-- DESTINO -->
+            <div class="grupo-formulario">
+
+                <label for="destino">
+                    Lugar de destino
+                </label>
+
+                <input type="text"
+                       id="destino"
+                       th:field="*{destino}"
+                       placeholder="Ejemplo: Villa del Rosario"
+                       maxlength="100"
+                       required>
+
+            </div>
+
+            <!-- FECHA -->
+            <div class="grupo-formulario">
+
+                <label for="fecha">
+                    Fecha y hora del viaje
+                </label>
+
+                <input type="datetime-local"
+                       id="fecha"
+                       th:field="*{fecha}"
+                       required>
+
+            </div>
+
+            <!-- CARRO -->
+            <div class="grupo-formulario">
+
+                <label for="carroId">
+                    Seleccionar carro
+                </label>
+
+                <select id="carroId"
+                        name="carroId"
+                        required>
+
+                    <option value="">
+                        Selecciona un carro
+                    </option>
+
+                    <option th:each="carro : ${carros}"
+                            th:value="${carro.id}"
+                            th:text="|${carro.placa} - ${carro.marca}|"
+                            th:selected="${carroSeleccionado != null and carroSeleccionado == carro.id}">
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- CHOFER -->
+            <div class="grupo-formulario">
+
+                <label for="choferId">
+                    Seleccionar chofer
+                </label>
+
+                <select id="choferId"
+                        name="choferId"
+                        required>
+
+                    <option value="">
+                        Selecciona un chofer
+                    </option>
+
+                    <option th:each="chofer : ${choferes}"
+                            th:value="${chofer.id}"
+                            th:text="|${chofer.nombre} ${chofer.apellido} - ${chofer.documento}|"
+                            th:selected="${choferSeleccionado != null and choferSeleccionado == chofer.id}">
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- PASAJERO -->
+            <div class="grupo-formulario">
+
+                <label for="pasajeroId">
+                    Seleccionar pasajero
+                </label>
+
+                <select id="pasajeroId"
+                        name="pasajeroId"
+                        required>
+
+                    <option value="">
+                        Selecciona un pasajero
+                    </option>
+
+                    <option th:each="pasajero : ${pasajeros}"
+                            th:value="${pasajero.id}"
+                            th:text="|${pasajero.nombre} ${pasajero.apellido} - ${pasajero.documento}|"
+                            th:selected="${pasajeroSeleccionado != null and pasajeroSeleccionado == pasajero.id}">
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- BOTONES -->
+            <div class="acciones-formulario">
+
+                <button type="submit"
+                        class="boton-principal"
+                        th:disabled="${#lists.isEmpty(carros) or #lists.isEmpty(choferes) or #lists.isEmpty(pasajeros)}">
+                    Guardar viaje
+                </button>
+
+                <a th:href="@{/viajes}"
+                   class="boton-secundario">
+                    Cancelar
+                </a>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+<footer class="pie-pagina">
+    <p>Sistema Movilidad | Proyecto Spring Boot</p>
+</footer>
+
+</body>
+</html>
